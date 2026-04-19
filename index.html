@@ -11,13 +11,13 @@
     <div class="container hero__inner">
       <div>
         <div class="eyebrow">OGN COLLECTOR SYSTEM</div>
-        <h1>Álbum OGN</h1>
-        <p>El front-end actúa como visualizador del contenido definido en Google Sheets. Nombre, número, team y foto cargan desde la base.</p>
+        <h1>Álbum FIFA WC 2026 OGN</h1>
+        <p>El Album coleccionable de jugadores de las selecciones de LAMEX</p>
       </div>
       <div class="hero__box">
-        <div><span>Fuente de verdad</span><strong>Google Sheets</strong></div>
-        <div><span>Booster</span><strong>3 cartas</strong></div>
-        <div><span>Cooldown</span><strong>1 hora</strong></div>
+        <div><img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?&io=transform:fill,height:210&quality=75" alt="Texto descriptivo" width="200" height="200">
+</div>
+
       </div>
     </div>
   </header>
@@ -27,7 +27,7 @@
       <div class="panel__head">
         <div>
           <h2>Acceso</h2>
-          <p>Carga tu colección y consulta el progreso del álbum.</p>
+          <p>Carga tu colección y consulta el progreso del álbum coloca tu usuario y correo de Organon</p>
         </div>
       </div>
       <div class="grid-3">
@@ -37,7 +37,7 @@
         </div>
         <div>
           <label>Correo</label>
-          <input id="userEmail" type="email" placeholder="nombre@empresa.com" />
+          <input id="userEmail" type="email" placeholder="nombre@organon.com" />
         </div>
         <div class="field-button">
           <button class="btn btn--primary" id="loadCollectionBtn">Cargar colección</button>
@@ -49,7 +49,7 @@
       <div class="panel__head panel__head--wrap">
         <div>
           <h2>Booster pack opener</h2>
-          <p>Abre un booster de 3 cartas con animación. La rareza existe en la hoja, pero no se muestra al usuario.</p>
+          <p>Abre un booster de 3 cartas.</p>
         </div>
         <div class="cooldown-box">
           <span>Próxima apertura</span>
@@ -60,13 +60,13 @@
         <div class="booster-pack-wrap">
           <button id="openBoosterBtn" class="booster-pack" aria-label="Abrir booster">
             <div class="booster-pack__shine"></div>
-            <div class="booster-pack__title">OGN</div>
+            <div class="booster-pack__title">OGN CARDS</div>
             <div class="booster-pack__subtitle">Booster Pack</div>
             <div class="booster-pack__meta">3 cartas · 1 hora</div>
           </button>
         </div>
         <div class="booster-reveal" id="boosterReveal">
-          <div class="booster-placeholder">Aquí aparecerán las 3 cartas del booster.</div>
+          <div class="booster-placeholder">Aquí aparecerán las 3 cartas del booster pack.</div>
         </div>
       </div>
     </section>
@@ -82,7 +82,7 @@
       <div class="panel__head panel__head--wrap">
         <div>
           <h2>Álbum completo</h2>
-          <p>Visualización de 100 cards renderizadas desde la data de Google Sheets.</p>
+          <p>Visualización de 100 cards.</p>
         </div>
         <div class="filters-inline">
           <input id="searchInput" placeholder="Buscar por nombre, número o team" />
