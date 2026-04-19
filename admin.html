@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OGN Album Admin</title>
+  <style>
+    :root { --bg:#f4f7fb; --surface:#fff; --text:#10243e; --muted:#61758d; --line:#d7e1ea; --navy:#103a5d; --teal:#00a7b5; --gold:#e2b641; --green:#14835d; --danger:#bf4434; --shadow:0 18px 40px rgba(16,58,93,.12); }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text)} .shell{max-width:1260px;margin:0 auto;padding:24px} .hero{background:linear-gradient(135deg,var(--navy),#1a4b76 60%,var(--teal));color:#fff;border-radius:28px;padding:28px;box-shadow:var(--shadow);margin-bottom:20px} .card{background:var(--surface);border-radius:22px;padding:22px;box-shadow:var(--shadow);border:1px solid rgba(16,58,93,.07);margin-bottom:18px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px} label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px;font-weight:700} input,button{width:100%;border-radius:14px;border:1px solid var(--line);padding:12px 14px;font:inherit} button{border:none;cursor:pointer;font-weight:800}.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.primary{background:linear-gradient(135deg,var(--teal),#0894a2);color:#fff}.dark{background:var(--navy);color:#fff} table{width:100%;border-collapse:collapse;font-size:14px} th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top} th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)} .status{margin-top:12px;padding:12px 14px;border-radius:14px;display:none;font-weight:700}.status.ok{display:block;background:rgba(20,131,93,.12);color:var(--green)}.status.error{display:block;background:rgba(191,68,52,.1);color:var(--danger)} @media (max-width:960px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <h1>Administrador del álbum OGN</h1>
+      <p>La rareza vive en Google Sheets y se usa para la mecánica del booster, pero no se muestra en el front del usuario.</p>
+    </section>
+
+    <section class="card">
+      <label>Web App URL</label>
+      <input id="apiUrl" placeholder="Pega aquí tu URL de Apps Script" />
+      <div class="cta">
+        <button class="primary" onclick="saveUrl()">Guardar URL</button>
+        <button class="dark" onclick="loadAll()">Actualizar panel</button>
+      </div>
+      <div id="status" class="status"></div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Usuarios</h2>
+        <table><thead><tr><th>Correo</th><th>Nombre</th><th>Última apertura</th><th>Únicas</th></tr></thead><tbody id="usersBody"></tbody></table>
+      </section>
+      <section class="card">
+        <h2>Booster logs</h2>
+        <table><thead><tr><th>Correo</th><th>Fecha</th><th>Cards</th></tr></thead><tbody id="logsBody"></tbody></table>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>Cards master</h2>
+      <table><thead><tr><th>#</th><th>ID</th><th>Name</th><th>Team</th><th>Photo URL</th><th>Rarity</th><th>Weight</th></tr></thead><tbody id="cardsBody"></tbody></table>
+    </section>
+  </div>
+  <script>
+    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbzlMlnCIvUU6xwCTxBuogTqPsF1689oYIl-RV8PFDex9xu7v2oQ81kyiHl8TaFj2YNgrA/exec';
+    function apiUrl(){ return localStorage.getItem('ogn_album_api_v2') || DEFAULT_API_URL; }
+    function showStatus(message, type='ok'){ const el=document.getElementById('status'); el.className=`status ${type}`; el.textContent=message; }
+    function saveUrl(){ localStorage.setItem('ogn_album_api_v2', document.getElementById('apiUrl').value.trim()); showStatus('URL guardada.'); }
+    async function get(q){ const res=await fetch(`${apiUrl()}?${q}`); return await res.json(); }
+    async function loadAll(){
+      try{
+        document.getElementById('apiUrl').value = apiUrl();
+    loadAll();
+        if(!apiUrl()) throw new Error('Guarda primero la URL del Web App.');
+        const [users, cards, logs] = await Promise.all([
+          get('action=adminUsers'),
+          get('action=adminCards'),
+          get('action=adminLogs')
+        ]);
+        if(!users.success || !cards.success || !logs.success) throw new Error('No fue posible cargar el panel admin.');
+        document.getElementById('usersBody').innerHTML = users.users.map(u => `<tr><td>${u.email}</td><td>${u.name}</td><td>${u.lastOpenAt || '-'}</td><td>${u.uniqueCount || 0}</td></tr>`).join('');
+        document.getElementById('cardsBody').innerHTML = cards.cards.map(c => `<tr><td>${c.number}</td><td>${c.cardId}</td><td>${c.name || ''}</td><td>${c.team || ''}</td><td>${c.photoUrl || ''}</td><td>${c.rarity}</td><td>${c.weight}</td></tr>`).join('');
+        document.getElementById('logsBody').innerHTML = logs.logs.map(l => `<tr><td>${l.email}</td><td>${l.openedAt}</td><td>${l.cards}</td></tr>`).join('');
+        showStatus('Panel cargado correctamente.');
+      }catch(e){ showStatus(e.message, 'error'); }
+    }
+    document.getElementById('apiUrl').value = apiUrl();
+    loadAll();
+  </script>
+</body>
+</html>

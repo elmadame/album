@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OGN Album · Visualizador</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container hero__inner">
+      <div>
+        <div class="eyebrow">OGN COLLECTOR SYSTEM</div>
+        <h1>Álbum OGN</h1>
+        <p>El front-end actúa como visualizador del contenido definido en Google Sheets. Nombre, número, team y foto cargan desde la base.</p>
+      </div>
+      <div class="hero__box">
+        <div><span>Fuente de verdad</span><strong>Google Sheets</strong></div>
+        <div><span>Booster</span><strong>3 cartas</strong></div>
+        <div><span>Cooldown</span><strong>1 hora</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page">
+    <section class="panel access-panel">
+      <div class="panel__head">
+        <div>
+          <h2>Acceso</h2>
+          <p>Carga tu colección y consulta el progreso del álbum.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div>
+          <label>Nombre</label>
+          <input id="userName" placeholder="Ej. Luis Herrera" />
+        </div>
+        <div>
+          <label>Correo</label>
+          <input id="userEmail" type="email" placeholder="nombre@empresa.com" />
+        </div>
+        <div class="field-button">
+          <button class="btn btn--primary" id="loadCollectionBtn">Cargar colección</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel booster-panel">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Booster pack opener</h2>
+          <p>Abre un booster de 3 cartas con animación. La rareza existe en la hoja, pero no se muestra al usuario.</p>
+        </div>
+        <div class="cooldown-box">
+          <span>Próxima apertura</span>
+          <strong id="cooldownText">Cargar usuario</strong>
+        </div>
+      </div>
+      <div class="booster-layout">
+        <div class="booster-pack-wrap">
+          <button id="openBoosterBtn" class="booster-pack" aria-label="Abrir booster">
+            <div class="booster-pack__shine"></div>
+            <div class="booster-pack__title">OGN</div>
+            <div class="booster-pack__subtitle">Booster Pack</div>
+            <div class="booster-pack__meta">3 cartas · 1 hora</div>
+          </button>
+        </div>
+        <div class="booster-reveal" id="boosterReveal">
+          <div class="booster-placeholder">Aquí aparecerán las 3 cartas del booster.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card"><span>Únicas</span><strong id="uniqueCount">0 / 100</strong></article>
+      <article class="stat-card"><span>Total</span><strong id="totalCount">0</strong></article>
+      <article class="stat-card"><span>Duplicadas</span><strong id="duplicateCount">0</strong></article>
+      <article class="stat-card"><span>Progreso</span><strong id="progressPercent">0%</strong></article>
+    </section>
+
+    <section class="panel album-panel">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Álbum completo</h2>
+          <p>Visualización de 100 cards renderizadas desde la data de Google Sheets.</p>
+        </div>
+        <div class="filters-inline">
+          <input id="searchInput" placeholder="Buscar por nombre, número o team" />
+          <select id="ownershipFilter">
+            <option value="all">Todas</option>
+            <option value="owned">Solo obtenidas</option>
+            <option value="missing">Solo faltantes</option>
+          </select>
+        </div>
+      </div>
+      <div class="album-grid" id="albumGrid"></div>
+    </section>
+
+    <div id="statusBox" class="status status--hidden"></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
