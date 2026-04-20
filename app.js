@@ -88,7 +88,7 @@ function computeStats(cards, collection) {
 }
 
 function updateStats(stats) {
-  byId('uniqueCount').textContent = `${stats.uniqueCount} / 100`;
+  byId('uniqueCount').textContent = `${stats.uniqueCount} / 103`;
   byId('totalCount').textContent = stats.totalCount;
   byId('duplicateCount').textContent = stats.duplicateCount;
   byId('progressPercent').textContent = `${stats.progressPercent}%`;
