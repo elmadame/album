@@ -3,102 +3,181 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OGN Album · Visualizador</title>
+  <title>OGN Album · Copa Organon 2026</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="hero">
+  <header class="hero hero--album">
     <div class="container hero__inner">
-      <div>
-        <div class="eyebrow">---Álbum digital coleccionable</div>
+      <div class="hero__copy">
+        <div class="eyebrow">Álbum digital coleccionable</div>
         <h1>COPA ORGANON 2026</h1>
-        <p>Abre sobres, colecciona cartas, intercambia y completa tu álbum. Juega, compite y gana reconocimientos exclusivos.
-
-</p>
+        <p>Abre sobres, colecciona cartas, intercambia duplicadas y completa tu álbum. Cada decisión cuenta: administra tus cartas, acelera tu progreso y compite por reconocimientos exclusivos.</p>
+        <div class="hero__actions">
+          <a class="pill" href="#boosterSection">Abrir sobre</a>
+          <a class="pill pill--light" href="#exchangeSection">Intercambiar cartas</a>
+        </div>
       </div>
-      <div class="hero__box">
-        <div><img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?&io=transform:fill,height:210&quality=75" alt="Texto descriptivo" width="100" height="145">
-</div>
 
+      <div class="hero__showcase" aria-hidden="true">
+        <div class="showcase-card showcase-card--one">
+          <span>#026</span>
+          <strong>OGN</strong>
+          <small>Booster Pack</small>
+        </div>
+        <div class="showcase-card showcase-card--two">
+          <span>3 / día</span>
+          <strong>EX</strong>
+          <small>Exchange</small>
+        </div>
+        <div class="showcase-logo">
+          <img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?&io=transform:fill,height:210&quality=75" alt="Copa 2026" />
+        </div>
       </div>
     </div>
   </header>
 
   <main class="container page">
     <section class="panel access-panel">
-      <div class="panel__head">
+      <div class="panel__head panel__head--wrap">
         <div>
           <h2>Acceso</h2>
-          <p>Carga tu colección y consulta el progreso del álbum coloca tu usuario y correo de Organon</p>
+          <p>Carga tu colección con tu usuario y correo corporativo.</p>
         </div>
+        <div class="security-note">Tu progreso se valida contra la base actual.</div>
       </div>
       <div class="grid-3">
         <div>
-          <label>Usuario</label>
-          <input id="userName" placeholder="Ej. usuario@organon.com" />
+          <label for="userName">Usuario</label>
+          <input id="userName" placeholder="Ej. Luis" autocomplete="name" />
         </div>
         <div>
-          <label>Correo</label>
-          <input id="userEmail" type="email" placeholder="nombre@organon.com" />
+          <label for="userEmail">Correo</label>
+          <input id="userEmail" type="email" placeholder="nombre@organon.com" autocomplete="email" />
         </div>
         <div class="field-button">
-          <button class="btn btn--primary" id="loadCollectionBtn">Cargar colección</button>
+          <button class="btn btn--primary" id="loadCollectionBtn" type="button">Cargar colección</button>
         </div>
       </div>
     </section>
 
-    <section class="panel booster-panel">
-      <div class="panel__head panel__head--wrap">
-        <div>
-          <h2>Booster pack / Abre sobres</h2>
-          <p>Abre un booster de 3 cartas cada hora</p>
-        </div>
-        <div class="cooldown-box">
-          <span>Próxima apertura</span>
-          <strong id="cooldownText">Cargar usuario</strong>
-        </div>
-      </div>
-      <div class="booster-layout">
-        <div class="booster-pack-wrap">
-          <button id="openBoosterBtn" class="booster-pack" aria-label="Abrir booster">
-            <div class="booster-pack__shine"></div>
-            <div class="booster-pack__title">WC 2026</div>
-            <div class="booster-pack__subtitle">Booster Pack</div>
-            <div class="booster-pack__meta"><img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?&io=transform:fill,height:210&quality=75" alt="Texto descriptivo" width="150" height="200"></div>
-          </button>
-        </div>
-        <div class="booster-reveal" id="boosterReveal">
-          <div class="booster-placeholder">Aquí aparecerán las 3 cartas del booster pack.(Puede tardar unos segundos)</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="stats-grid">
+    <section class="stats-grid" aria-label="Resumen de colección">
       <article class="stat-card"><span>Únicas</span><strong id="uniqueCount">0 / 103</strong></article>
       <article class="stat-card"><span>Total</span><strong id="totalCount">0</strong></article>
       <article class="stat-card"><span>Duplicadas</span><strong id="duplicateCount">0</strong></article>
       <article class="stat-card"><span>Progreso</span><strong id="progressPercent">0%</strong></article>
     </section>
 
+    <section class="panel booster-panel" id="boosterSection">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Booster pack</h2>
+          <p>Abre un booster de 3 cartas cuando el cooldown esté disponible.</p>
+        </div>
+        <div class="booster-tools">
+          <div class="cooldown-box">
+            <span>Próxima apertura</span>
+            <strong id="cooldownText">Cargar usuario</strong>
+          </div>
+          <div class="code-box">
+            <label for="boosterCodeInput">Código booster extra</label>
+            <div class="code-box__row">
+              <input id="boosterCodeInput" placeholder="OGN-UXUZ-Y7AY-PMMN" autocomplete="off" />
+              <button class="btn btn--secondary" id="redeemBoosterCodeBtn" type="button">Abrir extra</button>
+            </div>
+            <small>Cada código abre 1 booster adicional. No reinicia ni modifica el cooldown normal.</small>
+          </div>
+        </div>
+      </div>
+      <div class="booster-layout">
+        <div class="booster-pack-wrap">
+          <button id="openBoosterBtn" class="booster-pack booster-pack--gold" aria-label="Abrir booster" type="button">
+            <div class="booster-pack__shine"></div>
+            <div class="booster-pack__badge">OGN</div>
+            <div class="booster-pack__title">WC 2026</div>
+            <div class="booster-pack__subtitle">Booster Pack</div>
+            <div class="booster-pack__meta">3 cartas · rareza ponderada</div>
+          </button>
+        </div>
+        <div class="booster-reveal" id="boosterReveal">
+          <div class="booster-placeholder">Aquí aparecerán las 3 cartas del booster pack. Puede tardar unos segundos.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel exchange-panel" id="exchangeSection">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Centro de intercambio</h2>
+          <p>Cambia cartas duplicadas por una nueva oportunidad de completar tu álbum. Límite: 3 intercambios diarios por usuario.</p>
+        </div>
+        <div class="exchange-kpis">
+          <div class="cooldown-box cooldown-box--exchange">
+            <span>Intercambios de hoy</span>
+            <strong id="exchangeLimitText">0 / 3</strong>
+          </div>
+          <div class="cooldown-box cooldown-box--exchange">
+            <span>Reinicio</span>
+            <strong id="exchangeResetText">Mañana</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="exchange-layout">
+        <div class="exchange-form">
+          <div>
+            <label for="exchangeGiveCard">Carta duplicada para entregar</label>
+            <select id="exchangeGiveCard">
+              <option value="">Carga tu colección</option>
+            </select>
+          </div>
+          <div>
+            <label for="exchangeMode">Tipo de intercambio</label>
+            <select id="exchangeMode">
+              <option value="missing">Recibir faltante aleatoria</option>
+              <option value="sameRarity">Recibir faltante de rareza similar</option>
+            </select>
+          </div>
+          <button class="btn btn--exchange" id="exchangeCardBtn" type="button">Intercambiar ahora</button>
+          <p class="microcopy">Solo se pueden intercambiar cartas duplicadas validadas en la base. Las cartas únicas quedan protegidas.</p>
+        </div>
+
+        <div class="exchange-preview" id="exchangePreview">
+          <div class="exchange-preview__empty">
+            <strong>Exchange Machine</strong>
+            <span>Selecciona una duplicada para iniciar el intercambio.</span>
+          </div>
+        </div>
+
+        <div class="exchange-history">
+          <h3>Últimos intercambios</h3>
+          <div id="exchangeHistoryList" class="exchange-history__list">
+            <div class="empty-row">Sin movimientos todavía.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="panel album-panel">
       <div class="panel__head panel__head--wrap">
         <div>
           <h2>Álbum completo</h2>
-          <p>Visualización de 103 cards.</p>
+          <p id="albumSubtitle">Visualización de 103 cards.</p>
         </div>
         <div class="filters-inline">
           <input id="searchInput" placeholder="Buscar por nombre, número o team" />
-          <select id="ownershipFilter">
+          <select id="ownershipFilter" aria-label="Filtro de propiedad">
             <option value="all">Todas</option>
             <option value="owned">Solo obtenidas</option>
             <option value="missing">Solo faltantes</option>
+            <option value="duplicates">Solo duplicadas</option>
           </select>
         </div>
       </div>
       <div class="album-grid" id="albumGrid"></div>
     </section>
 
-    <div id="statusBox" class="status status--hidden"></div>
+    <div id="statusBox" class="status status--hidden" role="status" aria-live="polite"></div>
   </main>
 
   <script src="app.js"></script>
