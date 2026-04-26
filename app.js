@@ -3,7 +3,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzlMlnCIvUU6xwCTxBuogTq
 const USER_STORAGE_KEY = 'ogn_album_prod_user';
 const BOOSTER_CODE_STORAGE_KEY = 'ogn_album_used_extra_booster_codes_v2';
 const LOCAL_EXTRA_COLLECTION_STORAGE_KEY = 'ogn_album_extra_booster_collection_v1';
-const DAILY_EXCHANGE_LIMIT = 3;
+const DAILY_EXCHANGE_LIMIT = 2;
 
 const EXTRA_BOOSTER_CODES = Object.freeze([
   'OGN-UXUZ-Y7AY-PMMN', 'OGN-NYEJ-A44T-LQ7T', 'OGN-9G8Z-BP5A-N559',
