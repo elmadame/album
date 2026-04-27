@@ -659,3 +659,83 @@ bindEvents();
 updateStats(state.stats);
 renderAlbum();
 bootstrapProductionUser();
+(function initFloatingNavigation() {
+  function setupFloatingNavigation() {
+    const toggle = document.getElementById('floatingNavToggle');
+    const menu = document.getElementById('floatingNavMenu');
+    const navItems = Array.from(document.querySelectorAll('.floating-nav__item'));
+    const sections = navItems
+      .map(item => document.getElementById(item.dataset.section))
+      .filter(Boolean);
+
+    if (!toggle || !menu || !navItems.length) return;
+
+    function closeMenu() {
+      toggle.classList.remove('is-open');
+      menu.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function openMenu() {
+      toggle.classList.add('is-open');
+      menu.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function toggleMenu() {
+      const isOpen = menu.classList.contains('is-open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    }
+
+    toggle.addEventListener('click', toggleMenu);
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        closeMenu();
+      });
+    });
+
+    document.addEventListener('click', event => {
+      const clickedInsideMenu = event.target.closest('.floating-nav');
+      if (!clickedInsideMenu) closeMenu();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeMenu();
+    });
+
+    if ('IntersectionObserver' in window && sections.length) {
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            navItems.forEach(item => {
+              item.classList.toggle(
+                'is-active',
+                item.dataset.section === entry.target.id
+              );
+            });
+          });
+        },
+        {
+          root: null,
+          threshold: 0.34,
+          rootMargin: '-18% 0px -58% 0px'
+        }
+      );
+
+      sections.forEach(section => observer.observe(section));
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFloatingNavigation);
+  } else {
+    setupFloatingNavigation();
+  }
+})();
