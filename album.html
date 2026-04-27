@@ -38,7 +38,9 @@
   </header>
 
   <main class="container page">
+    <section id="acceso" class="panel access-panel">
     <section class="panel access-panel">
+      
       <div class="panel__head panel__head--wrap">
         <div>
           <h2>Acceso</h2>
@@ -67,7 +69,7 @@
       <article class="stat-card"><span>Duplicadas</span><strong id="duplicateCount">0</strong></article>
       <article class="stat-card"><span>Progreso</span><strong id="progressPercent">0%</strong></article>
     </section>
-
+<section id="booster" class="panel booster-panel">
     <section class="panel booster-panel" id="boosterSection">
       <div class="panel__head panel__head--wrap">
         <div>
@@ -106,7 +108,7 @@
         </div>
       </div>
     </section>
-
+<section id="intercambios" class="panel exchange-panel">
     <section class="panel exchange-panel" id="exchangeSection">
       <div class="panel__head panel__head--wrap">
         <div>
@@ -159,7 +161,7 @@
         </div>
       </div>
     </section>
-
+<section id="album" class="panel album-panel">
     <section class="panel album-panel">
       <div class="panel__head panel__head--wrap">
         <div>
@@ -183,5 +185,41 @@
   </main>
 
   <script src="app.js"></script>
+  <nav class="floating-nav" aria-label="Navegación rápida del álbum">
+  <button
+    class="floating-nav__toggle"
+    id="floatingNavToggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="floatingNavMenu"
+    aria-label="Abrir menú de navegación"
+  >
+    <span class="floating-nav__line"></span>
+    <span class="floating-nav__line"></span>
+    <span class="floating-nav__line"></span>
+  </button>
+
+  <div class="floating-nav__menu" id="floatingNavMenu">
+    <a href="#acceso" class="floating-nav__item" data-section="acceso">
+      <span class="floating-nav__icon">👤</span>
+      <span>Acceso</span>
+    </a>
+
+    <a href="#booster" class="floating-nav__item" data-section="booster">
+      <span class="floating-nav__icon">🎁</span>
+      <span>Booster</span>
+    </a>
+
+    <a href="#intercambios" class="floating-nav__item" data-section="intercambios">
+      <span class="floating-nav__icon">🔁</span>
+      <span>Intercambios</span>
+    </a>
+
+    <a href="#album" class="floating-nav__item" data-section="album">
+      <span class="floating-nav__icon">🃏</span>
+      <span>Álbum</span>
+    </a>
+  </div>
+</nav>
 </body>
 </html>
