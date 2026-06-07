@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OGN Album Admin · Exchange Control</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="admin-shell">
+    <section class="admin-hero">
+      <div class="eyebrow">Panel administrativo</div>
+      <h1>OGN Album Control Center</h1>
+      <p>Monitorea usuarios, cartas, booster logs e intercambios sin cambiar la estructura base de datos.</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Conexión</h2>
+          <p>Configura la URL del Web App de Apps Script.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div style="grid-column: span 2;">
+          <label for="apiUrl">Web App URL</label>
+          <input id="apiUrl" placeholder="Pega aquí tu URL de Apps Script" />
+        </div>
+        <div class="field-button">
+          <button class="btn btn--primary" onclick="saveUrl()" type="button">Guardar URL</button>
+        </div>
+      </div>
+      <div class="hero__actions" style="margin-top:14px;">
+        <button class="btn btn--secondary" onclick="loadAll()" type="button" style="max-width:220px;">Actualizar panel</button>
+      </div>
+      <div id="status" class="status status--hidden"></div>
+    </section>
+
+    <section class="admin-grid" aria-label="KPIs del álbum">
+      <article class="admin-kpi"><span>Usuarios</span><strong id="kpiUsers">0</strong></article>
+      <article class="admin-kpi"><span>Cartas master</span><strong id="kpiCards">0</strong></article>
+      <article class="admin-kpi"><span>Boosters</span><strong id="kpiBoosters">0</strong></article>
+      <article class="admin-kpi"><span>Exchanges</span><strong id="kpiExchanges">0</strong></article>
+    </section>
+
+    <div class="admin-two-col">
+      <section class="panel">
+        <div class="panel__head panel__head--wrap">
+          <div>
+            <h2>Usuarios</h2>
+            <p>Última actividad y progreso de colección.</p>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table>
+            <thead><tr><th>Correo</th><th>Nombre</th><th>Última apertura</th><th>Únicas</th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head panel__head--wrap">
+          <div>
+            <h2>Exchange logs</h2>
+            <p>Intercambios detectados desde el log actual.</p>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table>
+            <thead><tr><th>Correo</th><th>Fecha</th><th>Entregó</th><th>Recibió</th><th>Modo</th></tr></thead>
+            <tbody id="exchangeLogsBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Booster logs</h2>
+          <p>Aperturas de booster separadas de los intercambios.</p>
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table>
+          <thead><tr><th>Correo</th><th>Fecha</th><th>Cards</th></tr></thead>
+          <tbody id="logsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head panel__head--wrap">
+        <div>
+          <h2>Cards master</h2>
+          <p>Catálogo completo usado para booster, álbum e intercambios.</p>
+        </div>
+        <div class="filters-inline">
+          <input id="cardSearch" placeholder="Buscar carta, team o rareza" oninput="renderCards()" />
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>ID</th><th>Name</th><th>Team</th><th>Photo URL</th><th>Rarity</th><th>Weight</th></tr></thead>
+          <tbody id="cardsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbzlMlnCIvUU6xwCTxBuogTqPsF1689oYIl-RV8PFDex9xu7v2oQ81kyiHl8TaFj2YNgrA/exec';
+    let cache = { users: [], cards: [], logs: [] };
+
+    function apiUrl(){ return localStorage.getItem('ogn_album_api_v2') || DEFAULT_API_URL; }
+    function safe(value){ return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'", '&#039;'); }
+    function showStatus(message, type='ok'){
+      const el = document.getElementById('status');
+      el.className = `status status--${type}`;
+      el.textContent = message;
+    }
+    function saveUrl(){
+      localStorage.setItem('ogn_album_api_v2', document.getElementById('apiUrl').value.trim());
+      showStatus('URL guardada.', 'ok');
+    }
+    async function get(q){ const res = await fetch(`${apiUrl()}?${q}`); return await res.json(); }
+
+    function isExchangeLog(log){
+      const text = String(log.cards || log.type || '');
+      return text.startsWith('EXCHANGE|') || String(log.type || '').toLowerCase() === 'exchange';
+    }
+
+    function parseExchangeLog(raw){
+      const text = String(raw || '');
+      const result = { give: '-', receive: '-', mode: '-' };
+      text.split('|').forEach(part => {
+        const [key, value] = part.split('=');
+        if (key === 'give') result.give = value || '-';
+        if (key === 'receive') result.receive = value || '-';
+        if (key === 'mode') result.mode = value || '-';
+      });
+      return result;
+    }
+
+    function renderCards(){
+      const query = document.getElementById('cardSearch').value.trim().toLowerCase();
+      const rows = cache.cards.filter(c => `${c.number} ${c.cardId} ${c.name || ''} ${c.team || ''} ${c.rarity || ''}`.toLowerCase().includes(query));
+      document.getElementById('cardsBody').innerHTML = rows.map(c => `
+        <tr>
+          <td>${safe(c.number)}</td>
+          <td>${safe(c.cardId)}</td>
+          <td>${safe(c.name || '')}</td>
+          <td>${safe(c.team || '')}</td>
+          <td>${safe(c.photoUrl || '')}</td>
+          <td>${safe(c.rarity || '')}</td>
+          <td>${safe(c.weight || '')}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="7">Sin resultados.</td></tr>';
+    }
+
+    function renderPanel(){
+      const exchangeLogs = cache.logs.filter(isExchangeLog);
+      const boosterLogs = cache.logs.filter(l => !isExchangeLog(l));
+
+      document.getElementById('kpiUsers').textContent = cache.users.length;
+      document.getElementById('kpiCards').textContent = cache.cards.length;
+      document.getElementById('kpiBoosters').textContent = boosterLogs.length;
+      document.getElementById('kpiExchanges').textContent = exchangeLogs.length;
+
+      document.getElementById('usersBody').innerHTML = cache.users.map(u => `
+        <tr>
+          <td>${safe(u.email)}</td>
+          <td>${safe(u.name)}</td>
+          <td>${safe(u.lastOpenAt || '-')}</td>
+          <td>${safe(u.uniqueCount || 0)}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4">Sin usuarios.</td></tr>';
+
+      document.getElementById('logsBody').innerHTML = boosterLogs.map(l => `
+        <tr>
+          <td>${safe(l.email)}</td>
+          <td>${safe(l.openedAt)}</td>
+          <td>${safe(l.cards)}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="3">Sin booster logs.</td></tr>';
+
+      document.getElementById('exchangeLogsBody').innerHTML = exchangeLogs.map(l => {
+        const parsed = parseExchangeLog(l.cards);
+        return `
+          <tr>
+            <td>${safe(l.email)}</td>
+            <td>${safe(l.openedAt)}</td>
+            <td>${safe(parsed.give)}</td>
+            <td>${safe(parsed.receive)}</td>
+            <td>${safe(parsed.mode)}</td>
+          </tr>
+        `;
+      }).join('') || '<tr><td colspan="5">Sin intercambios.</td></tr>';
+
+      renderCards();
+    }
+
+    async function loadAll(){
+      try{
+        document.getElementById('apiUrl').value = apiUrl();
+        if(!apiUrl()) throw new Error('Guarda primero la URL del Web App.');
+        const [users, cards, logs] = await Promise.all([
+          get('action=adminUsers'),
+          get('action=adminCards'),
+          get('action=adminLogs')
+        ]);
+        if(!users.success || !cards.success || !logs.success) throw new Error('No fue posible cargar el panel admin.');
+        cache = { users: users.users || [], cards: cards.cards || [], logs: logs.logs || [] };
+        renderPanel();
+        showStatus('Panel cargado correctamente.', 'ok');
+      }catch(e){ showStatus(e.message, 'error'); }
+    }
+
+    document.getElementById('apiUrl').value = apiUrl();
+    loadAll();
+  </script>
+</body>
+</html>
